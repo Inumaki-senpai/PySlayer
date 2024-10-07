@@ -1,64 +1,59 @@
+import os
 
-while 1:
-    def add():
-        print("** Add Task **")
-        headline = input("Task Headline: ")
-        description = input("Description: ")
-        try:
-            tasks = open(".tasks.txt", "r")
-            tasks.close()
-            tasks = open(".tasks.txt", "a")
-            tasks.write(f"\n{headline}: {description}")
-        except FileNotFoundError:
-            tasks = open(".tasks.txt", "a+")
+
+def add():
+    print("** Add Task **")
+    headline = input("Task Headline: ")
+    description = input("Description: ")
+
+    try:
+        with open(".tasks.txt", "x") as tasks:
             tasks.write(f"{headline}: {description}")
-        tasks.close()
-        print("Task Added..")
 
-    def remove():
-        print("** Remove Task **")
-        headline = input("Task Headline: ")
-        tasks = open(".tasks.txt", "r")
-        task = list()
-        for line in tasks:
+    except FileExistsError:
+        with open(".tasks.txt", "a") as tasks:
+            tasks.write(f"\n{headline}: {description}")
+
+    print("Task Added..")
+
+
+def remove():
+    print("** Remove Task **")
+    headline = input("Task Headline: ")
+    with open(".tasks.txt", "r") as tasks:
+        task_lines = tasks.readlines()
+
+    with open(".tasks.txt", "w") as tasks:
+        for line in task_lines:
             if not headline in line:
-                task.append(line)
-        tasks.close()
-        
-        tasks = open(".tasks.txt", "w")
-        for i in task:
-            tasks.write(i)
+                tasks.write(line)
 
-        tasks.close()
-        print("Task Removed..")
+    if len(open(".tasks.txt", "r").readlines()) == 0:
+        os.remove(".tasks.txt")
+
+    print("Task no longer exists..")
 
 
-    def show():
-        print("** Show Task **")
-        tasks = open(".tasks.txt", "r+")
-        file = tasks.read()
+def show():
+    print("** Show Task **")
+    try:
+        with open(".tasks.txt", "r") as tasks:
+            task_lines =  tasks.readlines()
+    except FileNotFoundError:
+        print("No tasks found.. \nEnjoy your day.. ( ^ _ ^ ) \n")
+        return None
 
-        # Print tasks from file
-        count = 1
-        for i in file:
-            if i == ':':
-                print("\n  Description: ", end="")
-            else:
-                if (i == '\n') or (count == 1):
-                    print(f"\n\n{count}. Headline: ", end="")
+    # Print tasks from task_lines
+    count = 1
+    for i in task_lines:
+        i = i.replace(":", "\n  Description: ")
+        print(f"\n{count}. Headline: {i}", end="")
+        count += 1
 
-                    if count == 1:
-                        print(i, end="")
-
-                    count += 1
-                else:
-                    print(i, end="")
-        tasks.close()
-
-        print("\n\nThat's all for today..\n")
+    print("\n\nThat's all for today..\n")
 
 
-
+while True:
     print("** To Do Manager **")
     print(" 1. Add task")
     print(" 2. Remove task")
