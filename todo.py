@@ -1,4 +1,4 @@
-import os
+from os import remove
 
 
 def add():
@@ -17,7 +17,7 @@ def add():
     print("Task Added..")
 
 
-def remove():
+def rem():
     print("** Remove Task **")
     headline = input("Task Headline: ")
     with open(".tasks.txt", "r") as tasks:
@@ -29,7 +29,7 @@ def remove():
                 tasks.write(line)
 
     if len(open(".tasks.txt", "r").readlines()) == 0:
-        os.remove(".tasks.txt")
+        remove(".tasks.txt")
 
     print("Task no longer exists..")
 
@@ -66,7 +66,7 @@ while True:
         case "1":
             add()
         case "2":
-            remove()
+            rem()
         case "3":
             show()
         case "4":
